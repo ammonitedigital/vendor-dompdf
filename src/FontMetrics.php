@@ -181,7 +181,7 @@ class FontMetrics
 
         $styleString = $this->getType("{$style['weight']} {$style['style']}");
 
-        $remoteHash = md5($remoteFile);
+        $remoteHash = md5(basename($remoteFile));
 
         $prefix = $fontname . "_" . $styleString;
         $prefix = trim($prefix, "-");
@@ -654,6 +654,14 @@ class FontMetrics
      */
     public function setFontFamily($fontname, $entry)
     {
+        $currentFontDir = $this->getOptions()->getFontDir();
+      
+        foreach ($entry as $type => $path) {
+            if (strpos($path, $currentFontDir) !== false) {
+                $entry[$type] = basename($path);
+            }
+        }
+        
         $this->userFonts[mb_strtolower($fontname)] = $entry;
         $this->saveFontFamilies();
         unset($this->fontFamilies);
